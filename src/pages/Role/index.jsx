@@ -3,11 +3,11 @@ import { Card, Table, Button, Modal, message } from 'antd'
 import { reqGetRoles, reqAddRole, reqUpdateRole } from '../../api'
 import AddForm from './components/add-form'
 import AuthForm from './components/auth-form'
-import memory from '../../utils/memory'
-import { removeUser } from '../../utils/storage'
+import {connect} from 'react-redux'
+import {logout} from '../../redux/actions'
 
 
-export default class Role extends Component {
+ class Role extends Component {
     state = {
         roles: [],
         selectRole: {},
@@ -73,13 +73,11 @@ export default class Role extends Component {
         const { selectRole } = this.state
         selectRole.menus = this.refs.authForm.state.checkedKeys.join(',')
         selectRole.authTime = Date.now()
-        selectRole.authName = memory.user.name || 'admin'
+        selectRole.authName = this.props.user.name || 'admin'
         const result = await reqUpdateRole(selectRole.id, selectRole)
         if (result.status === 0) {
-            if (selectRole.name === memory.user.roleName) {
-                memory.user = {}
-                removeUser()
-                this.props.history.replace('/login')
+            if (selectRole.name === this.props.user.roleName) {
+                this.props.logout()
                 message.success('您已更改权限，请重新登录')
             } else {
                 message.success('角色授权成功')
@@ -134,3 +132,7 @@ export default class Role extends Component {
         )
     }
 }
+export default connect(
+    state => ({user:state.user}),
+    {logout}
+)(Role)

@@ -1,4 +1,4 @@
 const memory = {
-    user: {}
+    product: {}
 }
 export default memory

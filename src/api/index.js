@@ -1,6 +1,6 @@
 import request from './request'
 
-const BASE = 'http://120.55.193.14:5000'
+// const BASE = 'http://120.55.193.14:5000'
 // export const reqLogin = (username, password) => request(BASE + '/login', {
 //     username,
 //     password

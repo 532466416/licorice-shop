@@ -3,6 +3,7 @@ import { Card, List } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import LinkButton from '../../../components/linkButton'
 import { reqFindCategory } from '../../../api/index'
+import memory from '../../../utils/memory'
 const Itme = List.Item
 
 export default class ProductDetail extends Component {
@@ -10,7 +11,7 @@ export default class ProductDetail extends Component {
         belongCategory: ''
     }
     obtainCategory = async () => {
-        const { pcategoryId, categoryId } = this.props.location.state.product
+        const { pcategoryId, categoryId } = memory.product
         let result;
         if (pcategoryId === '0') {
             result = await reqFindCategory(categoryId)
@@ -25,13 +26,11 @@ export default class ProductDetail extends Component {
         this.obtainCategory()
     }
     render() {
-        const { name, desc, price, 
-            images, 
-            detail } = this.props.location.state.product
+        const { name, desc, price, images, detail } = memory.product
         const { belongCategory } = this.state
         const titleNode = (
             <span>
-                <LinkButton onClick={() => this.props.history.goBack()}><ArrowLeftOutlined /></LinkButton>
+                <LinkButton onClick={() => {this.props.history.goBack();memory.product = {}}}><ArrowLeftOutlined /></LinkButton>
                 <span>商品详情</span>
             </span>
         )

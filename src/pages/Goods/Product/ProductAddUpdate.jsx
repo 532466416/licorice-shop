@@ -5,6 +5,7 @@ import LinkButton from '../../../components/linkButton'
 import PictureWall from './components/picture-wall'
 import RichTextEditor from './components/rich-text-editor'
 import { reqCategorys, reqAddOrUpdateProduct } from '../../../api/index'
+import memory from '../../../utils/memory'
 const { Item } = Form
 const { TextArea } = Input
 
@@ -87,8 +88,8 @@ export default class ProductAddUpdate extends Component {
         })
     }
     UNSAFE_componentWillMount() {
-        this.isUpdate = !!this.props.location.state
-        this.product = this.props.location.state || {}
+        this.isUpdate = !!memory.product.id
+        this.product = memory.product || {}
     }
     componentDidMount() {
         this.getCategorys(0)
@@ -97,7 +98,7 @@ export default class ProductAddUpdate extends Component {
         const { product } = this
         const titleNode = (
             <span>
-                <LinkButton onClick={() => this.props.history.goBack()}><ArrowLeftOutlined /></LinkButton>
+                <LinkButton onClick={() => {this.props.history.goBack();memory.product = {}}}><ArrowLeftOutlined /></LinkButton>
                 <span>添加商品</span>
             </span>
         )

@@ -3,26 +3,14 @@ import './index.less'
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import SymbolImg from '../../assets/images/mangseng.png'
-import { reqLogin,reqRoles } from '../../api/index'
-import {message} from 'antd'
-import memory from '../../utils/memory'
-import {setUser} from '../../utils/storage'
-import {Redirect} from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux';
+import {login} from '../../redux/actions'
 
-export default class login extends Component {
+class Login extends Component {
     onFinish = async (value) => {
         const { username, password } = value
-        const result = await reqLogin(username, password)
-        if(result.status === 0){
-            const result2 = await reqRoles(result.data.roleId)
-            result.data.roles = result2.menus.split(',')
-            result.data.roleName = result2.name
-            memory.user = result.data
-            setUser(result.data)
-            this.props.history.replace('/')
-        }else{
-            message.error(result.msg)
-        }
+        this.props.login(username, password)
     }
     validator = (_, value) => {
         if (!value) {
@@ -39,10 +27,10 @@ export default class login extends Component {
     }
 
     render() {
-        const {user} = memory
-        if(user && user._id){
-            return <Redirect to='/'/>
-        }    
+        const { user } = this.props
+        if (user && user.id) {
+            return <Redirect to='/home' />
+        }
         return (
             <div className="login">
                 <header>
@@ -50,6 +38,7 @@ export default class login extends Component {
                     <div className="header-title"> Tool配置系统</div>
                 </header>
                 <section>
+                    <div className={  user.msg ? 'login-defeat-show login-defeat':'login-defeat'}>{ user.msg}</div>
                     <div className="section-title">用户登录</div>
                     <Form
                         name="normal_login"
@@ -64,14 +53,14 @@ export default class login extends Component {
                             { max: 12, message: '最大长度为12' },
                             { pattern: /^[a-zA-Z0-9_]+$/, message: '请使用中文、数字、下滑线' }
                             ]}
-                            initialValue="admin"
+                            initialValue="main"
                         >
                             <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
                         </Form.Item>
                         <Form.Item
                             name="password"
                             rules={[{ validator: this.validator }]}
-                            initialValue="123456"
+                            initialValue="123123"
                         >
                             <Input
                                 prefix={<LockOutlined className="site-form-item-icon" />}
@@ -90,3 +79,8 @@ export default class login extends Component {
         )
     }
 }
+
+export default connect(
+    state => ({user:state.user}),
+    {login}
+)(Login)

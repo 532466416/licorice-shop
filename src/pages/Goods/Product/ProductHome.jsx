@@ -3,6 +3,7 @@ import { Card, Select, Input, Table, Button, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import LinkButton from '../../../components/linkButton'
 import { reqProductList, reqSearchProduct, reqChangeStatus } from '../../../api/index'
+import memory from '../../../utils/memory'
 const { Option } = Select
 
 export default class ProductHome extends Component {
@@ -49,8 +50,8 @@ export default class ProductHome extends Component {
             render: (product) => {
                 return (
                     <span>
-                        <LinkButton onClick={() => this.props.history.push('/product/detail', { product })}>详情</LinkButton>
-                        <LinkButton onClick={() => this.props.history.push('/product/addupdate', product)}>修改</LinkButton>
+                        <LinkButton onClick={() => this.showDetail(product)}>详情</LinkButton>
+                        <LinkButton onClick={() => this.showUpdate(product)}>修改</LinkButton>
                     </span>
                 )
             }
@@ -78,6 +79,14 @@ export default class ProductHome extends Component {
         } else {
             message.error('更新失败')
         }
+    }
+    showDetail = (product) => {
+        memory.product = product
+        this.props.history.push('/product/detail')
+    }
+    showUpdate = product => {
+        memory.product = product
+        this.props.history.push('/product/addupdate')
     }
     componentDidMount() {
         this.obtainProducts(1)

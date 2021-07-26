@@ -2,9 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import 'antd/dist/antd.less'
-import {BrowserRouter} from 'react-router-dom'
-import memory from './utils/memory'
-import {getUser} from './utils/storage'
-memory.user = getUser()
+import {HashRouter} from 'react-router-dom'
+import {Provider} from 'react-redux'
+import store from './redux/store'
 
-ReactDOM.render( <BrowserRouter> <App/></BrowserRouter> , document.getElementById('root'))
+ReactDOM.render( <Provider store={store}><HashRouter> <App/></HashRouter></Provider> , document.getElementById('root'))

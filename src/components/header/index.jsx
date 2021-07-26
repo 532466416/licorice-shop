@@ -4,10 +4,9 @@ import './index.less'
 import { Modal } from 'antd'
 import { reqWhether } from '../../api/index'
 import { timeFormat } from '../../utils/formateDeal'
-import memory from '../../utils/memory'
-import {removeUser} from '../../utils/storage'
-import menuLists from '../../config/menuConfig'
 import LinkButton from '../linkButton'
+import { connect } from 'react-redux'
+import {logout} from '../../redux/actions'
 
 class Header extends Component {
     state = {
@@ -32,45 +31,29 @@ class Header extends Component {
         // })
         this.setState({ weather })
     }
-    getModuleTitle = () => {
-        const { pathname } = this.props.location
-        menuLists.forEach(item => {
-            if (pathname.indexOf(item.key) === 0) {
-                this.moduleTitle = item.title
-            } else if (item.children) {
-                item.children.forEach(viceItem => {
-                    if (pathname.indexOf(viceItem.key) === 0) {
-                        this.moduleTitle = viceItem.title
-                    }
-                })
-            }
-        })
-    }
     logout = () => {
         Modal.confirm({
             title: '您确认要退出吗?',
             onOk: () => {
-                memory.user = {}
-                removeUser()
-                this.props.history.replace('/login')
+                this.props.logout()
             }
         });
 
     }
     render() {
         const { currentTime, weather } = this.state
-        this.getModuleTitle()
+        const {headerTitle} = this.props
         return (
             <div className="layout-header">
                 <div className="layout-header-top">
                     <span>
-                        欢迎，{memory.user.name}
+                        欢迎，{this.props.user.name}
                     </span>
                     <LinkButton onClick={this.logout} >退出</LinkButton>
                 </div>
                 <div className="layout-header-bottom">
                     <div className="header-bottom-left">
-                        {this.moduleTitle}
+                        {headerTitle}
                     </div>
                     <div className="header-bottom-right">
                         <span>{currentTime}</span>
@@ -82,4 +65,7 @@ class Header extends Component {
         )
     }
 }
-export default withRouter(Header)
+export default connect(
+    state => ({headerTitle:state.headerTitle,user:state.user}),
+    {logout}
+)(withRouter(Header))

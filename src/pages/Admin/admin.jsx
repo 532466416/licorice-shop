@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import memory from '../../utils/memory'
-import { Redirect,Route,Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import { Layout } from 'antd';
 import NaverBar from '../../components/navBar'
 import Header from '../../components/header'
@@ -12,24 +11,27 @@ import Role from '../Role'
 import Bar from '../echarts/bar'
 import Line from '../echarts/line'
 import Pie from '../echarts/pie'
+import Error from '../Error'
+import { connect } from 'react-redux'
 
-const {  Footer, Sider, Content } = Layout;
+const { Footer, Sider, Content } = Layout;
 
-export default class admin extends Component {
+class Admin extends Component {
     render() {
-        const { user } = memory
+        const { user } = this.props
         if (!user || !user.id) {
             return <Redirect to='/login' />
         }
         return (
-            <Layout style={{minHeight:'100%'}}>
+            <Layout style={{ minHeight: '100%' }}>
                 <Sider>
                     <NaverBar />
                 </Sider>
                 <Layout>
-                    <Header/>
-                    <Content style={{backgroundColor:'white',margin:'20px'}}>
+                    <Header />
+                    <Content style={{ backgroundColor: 'white', margin: '20px' }}>
                         <Switch>
+                            <Redirect exact from='/' to="/home" />
                             <Route path="/home" component={Home}></Route>
                             <Route path="/category" component={Category}></Route>
                             <Route path="/product" component={Product}></Route>
@@ -38,10 +40,10 @@ export default class admin extends Component {
                             <Route path="/charts/bar" component={Bar}></Route>
                             <Route path="/charts/line" component={Line}></Route>
                             <Route path="/charts/pie" component={Pie}></Route>
-                            <Redirect to="/home" />
+                            <Route component={Error} />
                         </Switch>
                     </Content>
-                    <Footer style={{textAlign:'center',color:'#ccc'}}>
+                    <Footer style={{ textAlign: 'center', color: '#ccc' }}>
                         欲买桂花同载酒，终不似，少年游
                     </Footer>
                 </Layout>
@@ -49,3 +51,7 @@ export default class admin extends Component {
         )
     }
 }
+
+export default connect(
+    state => ({ user: state.user })
+)(Admin)

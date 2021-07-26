@@ -4,7 +4,8 @@ import './index.less'
 import titleImg from '../../assets/images/mangseng.png'
 import { Menu } from 'antd';
 import menuLists from '../../config/menuConfig'
-import memory from '../../utils/memory'
+import { connect } from 'react-redux'
+import { setHeaderTitle } from '../../redux/actions'
 const { SubMenu } = Menu;
 
 class NavBar extends Component {
@@ -26,8 +27,8 @@ class NavBar extends Component {
     //     })
     // }
     permVerify = (item) => {
-        const { roles } = memory.user
-        if (memory.user.name === 'main' || roles.includes(item.key) || item.isPublic) return true
+        const { roles } = this.props.user
+        if (this.props.user.name === 'main' || roles.includes(item.key) || item.isPublic) return true
         else if (item.children) return !!item.children.find(child => roles.includes(child.key))
         return false
     }
@@ -36,8 +37,11 @@ class NavBar extends Component {
         return lists.reduce((pre, list) => {
             if (this.permVerify(list)) {
                 if (!list.children) {
+                    if (path.indexOf(list.key) === 0) {
+                        this.props.setHeaderTitle(list.title)
+                    }
                     pre.push((
-                        <Menu.Item key={list.key} icon={list.icon}>
+                        <Menu.Item key={list.key} icon={list.icon} onClick={() => this.props.setHeaderTitle(list.title)}>
                             <Link to={list.key}>{list.title}</Link>
                         </Menu.Item>
                     ))
@@ -85,4 +89,7 @@ class NavBar extends Component {
     }
 }
 
-export default withRouter(NavBar)
+export default connect(
+    state => ({user:state.user}),
+    { setHeaderTitle }
+)(withRouter(NavBar))
